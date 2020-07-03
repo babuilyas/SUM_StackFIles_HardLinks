@@ -8,9 +8,26 @@ namespace Generate_HardLinks
 {
     class Program
     {
+        static string js = @"
+// https://github.com/babuilyas/SUM_StackFIles_HardLinks
+// build array of files missing
+var a = [ 
+<FILES>
+];
+
+// todo: display all items by paging down
+// todo: select all items and run following script
+
+$('td').find('input').each(function(indx){console.log(this.checked)});
+a.forEach(function(item){
+console.log(item);
+sap.ui.getCore().byId($(\""td:contains('\""+item+\""')\"").closest('td').prev('td').children(0)[0].id).fireSelect();
+});
+$('td').find('input').each(function(indx){ console.log(this.checked)});
+";
+
         static void Main(string[] args)
-        {
-            
+        {           
 
             var xDocument = System.Xml.Linq.XDocument.Load("stackfiles.xls");
             // XML elements are in the "ss" namespace.
@@ -46,8 +63,12 @@ namespace Generate_HardLinks
             if (notfound.Count > 0)
             {
                 var txt = System.IO.File.CreateText("notfound.txt");
+                var sb = new StringBuilder();
                 foreach (var file in notfound)
-                    txt.WriteLine(file);
+                    sb.AppendFormat("'{0}',", file);
+                sb.Remove(sb.Length - 1, 1);
+                js = js.Replace("<FILES>", sb.ToString());
+                txt.WriteLine(js);
                 txt.Close();
             }
         }
@@ -80,8 +101,12 @@ namespace Generate_HardLinks
             if (notfound.Count > 0)
             {
                 var txt = System.IO.File.CreateText("notfound.txt");
+                var sb = new StringBuilder();
                 foreach (var file in notfound)
-                    txt.WriteLine(file);
+                    sb.AppendFormat("'{0}',", file);
+                sb.Remove(sb.Length - 1, 1);
+                js = js.Replace("<FILES>", sb.ToString());
+                txt.WriteLine(js);
                 txt.Close();
             }
         }
