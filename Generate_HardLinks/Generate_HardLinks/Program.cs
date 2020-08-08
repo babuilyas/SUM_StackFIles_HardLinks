@@ -21,7 +21,7 @@ var a = [
 $('td').find('input').each(function(indx){console.log(this.checked)});
 a.forEach(function(item){
 console.log(item);
-sap.ui.getCore().byId($(\""td:contains('\""+item+\""')\"").closest('td').prev('td').children(0)[0].id).fireSelect();
+sap.ui.getCore().byId($(""td:contains('""+item+""')"").closest('td').prev('td').children(0)[0].id).fireSelect();
 });
 $('td').find('input').each(function(indx){ console.log(this.checked)});
 ";
