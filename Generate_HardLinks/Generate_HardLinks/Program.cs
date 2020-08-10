@@ -36,24 +36,33 @@ $('td').find('input').each(function(indx){ console.log(this.checked)});
                             .Element(ss + "Table").Elements(ss + "Row");
             var files = from c in rows                        
                         select c.Elements(ss + "Cell").ElementAt(1).Element(ss + "Data").Value;
-            var notfound = new List<string>();
+
+            var yfiles = new List<System.IO.FileInfo>();
+            foreach (var dir in new System.IO.DirectoryInfo(Environment.CurrentDirectory).Root.GetDirectories())
+            {
+                try
+                {
+                    yfiles.AddRange(dir.GetFiles("*", System.IO.SearchOption.AllDirectories));
+                }
+                catch {
+                    continue;
+                }
+            }
+                var notfound = new List<string>();
             int i = 1;
             for (var j = 5; j < files.Count(); j++)
             {
                 var file = files.ElementAt(j);
                 Console.WriteLine("{0}/{1} {2}", i++, files.Count() - 5, file);
-                var xfiles = new List<System.IO.FileInfo>();
+                var xfiles = new List<System.IO.FileInfo>();                
                 if (file.Length > 0)
                 {
-                    foreach (var dir in new System.IO.DirectoryInfo(Environment.CurrentDirectory).Root.GetDirectories())
-                    {
                         try
                         {
-                            var xfiles2 = dir.GetFiles(new System.IO.FileInfo(file).Name, System.IO.SearchOption.AllDirectories);
-                            xfiles.AddRange(xfiles2.ToList<System.IO.FileInfo>());
+                            var xfiles2 = yfiles.FindAll((obj) => { return obj.Name == new System.IO.FileInfo(file).Name; });
+                            xfiles.AddRange(xfiles2);
                         }
                         catch { continue; }
-                    }
                 }
                 if (xfiles.Count > 0)
                     CreateHardLink(Environment.CurrentDirectory + "\\" + file, xfiles[0].FullName, IntPtr.Zero);
